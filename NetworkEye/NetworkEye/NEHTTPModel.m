@@ -56,16 +56,23 @@
         }
     }
 
-    if ([ne_request HTTPBody].length>512) {
+    NSData *body = [ne_request HTTPBody] ? [ne_request HTTPBody] : [NSURLProtocol propertyForKey:@"NFXBodyData" inRequest:ne_request];
+    
+    if (!body){
+        self.requestHTTPBody = nil;
+    }
+    else if (body.length>512) {
         self.requestHTTPBody=@"requestHTTPBody too long";
     }else{
-        self.requestHTTPBody=[[NSString alloc] initWithData:[ne_request HTTPBody] encoding:NSUTF8StringEncoding];
+        self.requestHTTPBody=[[NSString alloc] initWithData:body encoding:NSUTF8StringEncoding];
     }
+    
     if (self.requestHTTPBody.length>1) {
         if ([[self.requestHTTPBody substringFromIndex:self.requestHTTPBody.length-1] isEqualToString:@"\n"]) {
             self.requestHTTPBody=[self.requestHTTPBody substringToIndex:self.requestHTTPBody.length-1];
         }
     }
+
     
 }
 
